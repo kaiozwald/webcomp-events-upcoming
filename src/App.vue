@@ -10,6 +10,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       locationFilter: location,
       language: language,
       source: source,
+      tags: tags,
+      publishedOn: publishedOn,
+      expanded: expanded,
       maxEvents: maxEvents,
       locationToShow: locationToShow,
       eventRotationInterval: eventRotationInterval,
@@ -32,11 +35,23 @@ export default {
     },
     language: {
       type: String,
-      default: "de",
+      default: "en",
     },
     source: {
       type: String,
       default: "",
+    },
+    tags: {
+      type: String,
+      default: "",
+    },
+    publishedOn: {
+      type: String,
+      default: "",
+    },
+    expanded: {
+      type: String,
+      default: "false",
     },
     maxEvents: {
       type: Number,

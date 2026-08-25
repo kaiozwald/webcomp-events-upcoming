@@ -37,18 +37,41 @@
         "options": [
             {
                 "key": "source",
-                "type": "select",
-                "label": "Filter by dataprovider (null = all data providers, lts = LTS Data, trevilab = Centro Trevi Cultura Italiana",
+                "type": "text",
+                "label": "Filter by dataprovider. Provide a comma-separated list of sources (e.g., 'trevilab, drin, lts, retealfemminile, wnet, studiopink, momentus, noi') or 'null' for all.",
                 "required": false,        
                 "options": {
-                  "values": [
-                    "null",           
-                    "lts",                    
-                    "trevilab"
-                  ],
-                  "default":"null"
+                  "default": "null"
                 }
-              },
+            },
+            {
+                "key": "tags",
+                "type": "text",
+                "label": "Filter by tags. Provide a comma-separated list of tags.",
+                "required": false,        
+                "options": {
+                  "default": ""
+                }
+            },
+            {
+                "key": "published-on",
+                "type": "text",
+                "label": "Filter by published on. Provide a comma-separated list of publication flags.",
+                "required": false,        
+                "options": {
+                  "default": ""
+                }
+            },
+            {
+                "key": "expanded",
+                "type": "select",
+                "label": "Whether to show events fully expanded by default.",
+                "required": false,
+                "options": {
+                    "values": ["false", "true"],
+                    "default": "false"
+                }
+            },
               {
                 "key": "language",
                 "type": "select",
