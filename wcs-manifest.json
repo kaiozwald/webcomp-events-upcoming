@@ -19,6 +19,12 @@
             "email": "r.thoeni@noi.bz.it",
             "organization": "NOI S.p.A",
             "organizationUrl": "https://noi.bz.it"
+        },
+        {
+            "name": "Abduallah Abuhassan",
+            "email": "a.abuhassan@outlook.it",
+            "organization": "NOI S.p.A",
+            "organizationUrl": "https://noi.bz.it"
         }
     ],
     "image": "wcs-logo.png",
@@ -37,11 +43,11 @@
         "options": [
             {
                 "key": "source",
-                "type": "text",
+                "type": "multiselect",
                 "label": "Filter by dataprovider. Provide a comma-separated list of sources (e.g., 'trevilab, drin, lts, retealfemminile, wnet, studiopink, momentus, noi') or 'null' for all.",
                 "required": false,        
                 "options": {
-                  "default": "null"
+                   "values": ["noi","trevilab","drin","ebms","lts","momentus","nobis","peer","unibz","retealfemminile","studiopink","wnet"]
                 }
             },
             {
