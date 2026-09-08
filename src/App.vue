@@ -41,7 +41,7 @@ export default {
     },
     source: {
       type: String,
-      default: "",
+      default: "null",
     },
     tags: {
       type: String,

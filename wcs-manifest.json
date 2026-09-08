@@ -47,8 +47,7 @@
                 "label": "Filter by dataprovider. Provide a comma-separated list of sources (e.g., 'trevilab, drin, lts, retealfemminile, wnet, studiopink, momentus, noi') or 'null' for all.",
                 "required": false,        
                 "options": {
-                   "values": ["noi","trevilab","drin","ebms","lts","momentus","nobis","peer","unibz","retealfemminile","studiopink","wnet"],
-                   "default": ""
+                   "values": ["noi","trevilab","drin","ebms","lts","momentus","nobis","peer","unibz","retealfemminile","studiopink","wnet"]
                 }
             },
             {
