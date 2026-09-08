@@ -37,11 +37,42 @@
         "options": [
             {
                 "key": "source",
-                "type": "text",
-                "label": "Filter by dataprovider. Provide a comma-separated list of sources (e.g., 'trevilab, drin, lts, retealfemminile, wnet, studiopink, momentus, noi') or 'null' for all.",
+                "type": "multiselect",
+                "label": "Filter by dataprovider.",
                 "required": false,        
                 "options": {
-                  "default": "null"
+                  "values": [
+                    "trevilab",
+                    "drin",
+                    "lts",
+                    "retealfemminile",
+                    "wnet",
+                    "studiopink",
+                    "momentus",
+                    "noi",
+                    "eurac"
+                  ],
+                  "default": ""
+                }
+            },
+            {
+                "key": "theme",
+                "type": "select",
+                "label": "Select a UI theme/skin.",
+                "required": false,
+                "options": {
+                    "values": ["default", "eurac", "noi"],
+                    "default": "default"
+                }
+            },
+            {
+                "key": "show-room-on-main",
+                "type": "select",
+                "label": "Whether to display the specific room for the upcoming meeting on the main card.",
+                "required": false,
+                "options": {
+                    "values": ["false", "true"],
+                    "default": "false"
                 }
             },
             {

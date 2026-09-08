@@ -7,7 +7,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 <template>
   <div
     class="events-widget"
-    :style="{ 'font-family': options.fontName + ', sans-serif' }"
+    :class="'theme-' + (options.theme || 'default')"
+    :style="{
+      'font-family': options.fontName + ', sans-serif',
+      'background-color': options.backgroundColor,
+    }"
   >
     <header class="events-header">
       <h1 class="events-title">EVENTS</h1>
@@ -17,10 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       </div>
     </header>
 
-    <div
-      class="events-container"
-      :style="{ 'background-color': options.backgroundColor }"
-    >
+    <div class="events-container">
       <!-- Skeleton Loader -->
       <div v-if="isLoading" class="events-list">
         <div class="event-card skeleton-card" v-for="i in 3" :key="'skel-' + i">
@@ -37,22 +38,24 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
       <!-- Empty State -->
       <div v-else-if="events.length === 0" class="empty-state">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="empty-icon"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
+        <div class="empty-icon-wrapper">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="empty-icon"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
         <h3>No Upcoming Events</h3>
-        <p>Check back later for new events.</p>
+        <p>Check back later for new scheduled events.</p>
       </div>
 
       <!-- Event List -->
@@ -92,16 +95,54 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                   backgroundImage:
                     'linear-gradient(135deg, ' +
                     options.backgroundColor +
-                    ' 0%, #2F5C30 100%)',
+                    ' 0%, var(--theme-dark, #2F5C30) 100%)',
                 }"
               >
-                <span>{{ event.eventLocation }}</span>
+                <span style="display: flex; align-items: center; gap: 0.4rem">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="meta-icon"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  {{ event.eventLocation }}
+                </span>
               </div>
               <div class="event-upcoming">
                 <div class="event-upcoming-date">
                   {{ formatDate(event.nextBeginDate) }}
                 </div>
-                <div class="event-upcoming-time">{{ event.nextBeginTime }}</div>
+                <div class="event-upcoming-time">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="meta-icon"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {{ event.nextBeginTime }}
+                </div>
               </div>
               <div
                 class="expand-icon"
@@ -136,8 +177,23 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                   :key="dIndex"
                   class="expanded-date-item"
                 >
-                  <span class="date-bullet">&bull;</span>
-                  <span class="date-day">{{ d.From.substring(0, 10) }}</span>
+                  <span class="date-day">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="meta-icon"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    {{ d.From.substring(0, 10) }}
+                  </span>
                   <span
                     class="date-time"
                     v-if="d.Begin && d.End && !d.Begin.startsWith('00:00:00')"
@@ -233,7 +289,10 @@ export default {
       ];
 
       if (this.options.source && this.options.source !== "null") {
-        paramsList.push(["source", this.options.source]);
+        let sourceValue = Array.isArray(this.options.source)
+          ? this.options.source.join(",")
+          : this.options.source;
+        paramsList.push(["source", sourceValue]);
       }
       if (this.options.tags) {
         paramsList.push(["tagfilter", this.options.tags]);
@@ -275,11 +334,14 @@ export default {
             );
           } else {
             let venueId = element.VenueIds[0];
-            let venueRoomId =
-              element.VenueRoomDetailsIds &&
-              element.VenueRoomDetailsIds.length > 0
-                ? element.VenueRoomDetailsIds[0]
-                : null;
+            let venueRoomId = null;
+            if (
+              this.options.showRoomOnMain === "true" ||
+              this.options.showRoomOnMain === true
+            ) {
+              venueRoomId = nextbegin[2];
+            }
+
             let venueName = await this.getVenueName(
               venueId,
               venueRoomId,
@@ -420,6 +482,7 @@ export default {
     getNextBeginDate(eventdate) {
       let nextbegindate = null;
       let nextbegintime = null;
+      let nextbeginroomid = null;
       let now = Date.now();
       let tempdifference = 9999999999999;
 
@@ -443,6 +506,10 @@ export default {
           //Only if has not ended and the difference is the minimum
           if (hasended >= 0 && difference <= tempdifference) {
             nextbegindate = new Date(value.From);
+            nextbeginroomid =
+              value.VenueRoomDetailsIds && value.VenueRoomDetailsIds.length > 0
+                ? value.VenueRoomDetailsIds[0]
+                : null;
 
             if (
               value.Begin.startsWith("00:00") &&
@@ -460,33 +527,58 @@ export default {
           if (new Date(value.From) <= now && new Date(value.To) >= now) {
             nextbegindate = now;
             nextbegintime = noinfo[this.currentlanguage];
+          } else if (new Date(value.From) > now) {
+            difference = new Date(value.From) - now;
+            if (difference <= tempdifference) {
+              nextbegindate = new Date(value.From);
+              nextbegintime = noinfo[this.currentlanguage];
+              nextbeginroomid =
+                value.VenueRoomDetailsIds &&
+                value.VenueRoomDetailsIds.length > 0
+                  ? value.VenueRoomDetailsIds[0]
+                  : null;
+              tempdifference = difference;
+            }
           }
         }
       });
 
-      //console.log(nextbegindate);
-
-      return [nextbegindate, nextbegintime];
+      return [nextbegindate, nextbegintime, nextbeginroomid];
     },
     getPeriod(startDate, endDate, additionalinfo) {
-      var period = this.formatDate(startDate);
+      const start = moment(startDate);
+      const end = moment(endDate);
 
-      if (startDate.getDate().valueOf() != endDate.getDate().valueOf()) {
-        period = period + " - " + this.formatDate(endDate);
-      } else if (additionalinfo != null) {
+      let period = "";
+      if (start.isValid() && end.isValid()) {
+        period = start.format("DD-MM-YYYY");
+        if (start.format("DD-MM-YYYY") !== end.format("DD-MM-YYYY")) {
+          period += " - " + end.format("DD-MM-YYYY");
+        } else if (additionalinfo != null && additionalinfo.Location) {
+          period = additionalinfo.Location;
+        }
+      } else if (start.isValid()) {
+        period = start.format("DD-MM-YYYY");
+      } else if (additionalinfo != null && additionalinfo.Location) {
         period = additionalinfo.Location;
       }
 
       return period;
     },
     formatTime(date) {
-      return moment(date).format("HH:mm");
+      if (!date) return "";
+      const m = moment(date);
+      return m.isValid() ? m.format("HH:mm") : "";
     },
     formatDate(date) {
-      return moment(date).format("DD-MM-YYYY");
+      if (!date) return "";
+      const m = moment(date);
+      return m.isValid() ? m.format("DD-MM-YYYY") : "";
     },
     formatDateAndTime(date) {
-      return moment(date).format("YYYY-MM-DD HH:mm");
+      if (!date) return "";
+      const m = moment(date);
+      return m.isValid() ? m.format("YYYY-MM-DD HH:mm") : "";
     },
     getNow: function () {
       const today = new Date();
@@ -528,21 +620,17 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(245, 247, 250, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 2.5rem 2.5rem 1rem 2.5rem;
+  background: transparent;
+  color: var(--header-text, #ffffff);
 }
 
 .events-title {
   font-size: 3.5rem;
   font-weight: 800;
   letter-spacing: -0.05em;
-  color: var(--text-main, #2d3748);
+  color: var(--header-text, #ffffff);
+  margin: 0;
 }
 
 .events-datetime {
@@ -554,19 +642,17 @@ export default {
 .events-date {
   font-size: 2.25rem;
   font-weight: 700;
+  color: var(--header-text, #ffffff);
 }
 
 .events-time {
   font-size: 1.5rem;
-  color: var(--text-muted, #718096);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
 }
 
 .events-container {
-  border-radius: 24px;
-  padding: 2.5rem;
-  margin: 0 1.5rem;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2.5rem 2.5rem 2.5rem;
 }
 
 .events-list {
@@ -576,26 +662,30 @@ export default {
 }
 
 .event-card {
-  background: var(--card-bg, rgba(255, 255, 255, 0.9));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.4));
+  background: var(--card-bg, rgba(255, 255, 255, 0.85));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 16px;
   padding: 1.75rem 2.25rem;
   cursor: pointer;
-  box-shadow: var(--shadow-sm, 0 4px 6px rgba(0, 0, 0, 0.05));
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
 .event-card:focus-visible {
   outline: 2px solid var(--primary-accent, #3c763d);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 .event-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover, 0 20px 25px rgba(0, 0, 0, 0.1));
-  background: #ffffff;
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 24px 30px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .event-card-main {
@@ -612,17 +702,30 @@ export default {
 
 .event-name {
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #1a202c;
   line-height: 1.25;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .event-name a {
-  transition: color 0.2s;
+  text-decoration: none;
+  background-image: linear-gradient(
+    var(--primary-accent, #3c763d),
+    var(--primary-accent, #3c763d)
+  );
+  background-size: 0% 2px;
+  background-repeat: no-wrap;
+  background-position: left bottom;
+  padding-bottom: 2px;
+  transition: background-size 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    color 0.3s ease;
+  color: inherit;
 }
 
-.event-name a:hover {
+.event-card:hover .event-name a {
+  background-size: 100% 2px;
   color: var(--primary-accent, #3c763d);
 }
 
@@ -664,7 +767,24 @@ export default {
 .event-upcoming-time {
   font-size: 0.95rem;
   color: var(--text-muted, #718096);
-  font-weight: 500;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  margin-top: 0.2rem;
+}
+
+.meta-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.85;
+}
+
+.event-location .meta-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 1;
 }
 
 /* Expanded Details */
@@ -691,9 +811,31 @@ export default {
   display: flex;
   align-items: center;
   background: rgba(0, 0, 0, 0.03);
-  padding: 0.85rem 1.25rem;
+  padding: 0.85rem 1rem;
   border-radius: 8px;
   border-left: 4px solid var(--primary-accent, #3c763d);
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.date-day {
+  font-weight: 700;
+  color: var(--text-main, #2d3748);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.date-day .meta-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-accent, #3c763d);
+}
+
+.date-time {
+  color: var(--text-muted, #718096);
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .date-room {
@@ -701,48 +843,96 @@ export default {
   color: var(--text-main, #2d3748);
   font-weight: 600;
   margin-left: 0.75rem;
-  background: rgba(60, 118, 61, 0.1);
+  background: var(--room-bg, rgba(60, 118, 61, 0.1));
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
 }
 
-/* Skeleton Loading */
+/* Themes */
+.theme-default {
+  --primary-accent: #3c763d;
+  --theme-dark: #2f5c30;
+  --room-bg: rgba(60, 118, 61, 0.1);
+  --header-text: #ffffff;
+}
+
+.theme-eurac {
+  background-color: #f29400 !important;
+  --primary-accent: #f29400;
+  --theme-dark: #cc7d00;
+  --room-bg: rgba(242, 148, 0, 0.15);
+  --header-text: #ffffff;
+}
+
+.theme-eurac .event-location {
+  background-image: linear-gradient(
+    135deg,
+    #f29400 0%,
+    #cc7d00 100%
+  ) !important;
+}
+
+.theme-noi {
+  background-color: #000000 !important;
+  --primary-accent: #000000;
+  --theme-dark: #111111;
+  --room-bg: rgba(0, 0, 0, 0.1);
+  --header-text: #ffffff;
+}
+
+.theme-noi .event-location {
+  background-image: linear-gradient(
+    135deg,
+    #333333 0%,
+    #000000 100%
+  ) !important;
+}
+
+/* Skeleton Loading Shimmer */
 .skeleton-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: default;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .skeleton-card:hover {
   transform: none;
-  box-shadow: var(--shadow-sm, 0 4px 6px rgba(0, 0, 0, 0.05));
-  background: var(--card-bg, rgba(255, 255, 255, 0.9));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .skeleton-main {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
   flex: 1 1 300px;
 }
 
-.skeleton-title {
-  height: 28px;
-  width: 65%;
+.skeleton-title,
+.skeleton-subtitle,
+.skeleton-pill,
+.skeleton-date {
   background: #e2e8f0;
-  border-radius: 6px;
-  animation: pulse 1.5s infinite ease-in-out;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f7fafc 50%, #e2e8f0 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+}
+
+.skeleton-title {
+  height: 32px;
+  width: 65%;
 }
 
 .skeleton-subtitle {
-  height: 16px;
+  height: 18px;
   width: 40%;
-  background: #edf2f7;
-  border-radius: 4px;
-  animation: pulse 1.5s infinite ease-in-out;
 }
 
 .skeleton-meta {
@@ -752,30 +942,22 @@ export default {
 }
 
 .skeleton-pill {
-  height: 38px;
-  width: 130px;
-  background: #e2e8f0;
+  height: 42px;
+  width: 140px;
   border-radius: 9999px;
-  animation: pulse 1.5s infinite ease-in-out;
 }
 
 .skeleton-date {
-  height: 26px;
-  width: 90px;
-  background: #edf2f7;
-  border-radius: 6px;
-  animation: pulse 1.5s infinite ease-in-out;
+  height: 30px;
+  width: 95px;
 }
 
-@keyframes pulse {
+@keyframes shimmer {
   0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
+    background-position: 100% 50%;
   }
   100% {
-    opacity: 1;
+    background-position: 0 50%;
   }
 }
 
@@ -785,28 +967,37 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
-  color: rgba(255, 255, 255, 0.85);
+  padding: 8rem 2rem;
+  color: rgba(255, 255, 255, 0.95);
   text-align: center;
 }
 
+.empty-icon-wrapper {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 50%;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
 .empty-icon {
-  width: 72px;
-  height: 72px;
-  margin-bottom: 1.5rem;
-  opacity: 0.7;
+  width: 64px;
+  height: 64px;
+  opacity: 1;
 }
 
 .empty-state h3 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: white;
 }
 
 .empty-state p {
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1.15rem;
+  opacity: 0.85;
 }
 
 /* List Stagger Animations */

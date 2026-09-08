@@ -13,6 +13,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       tags: tags,
       publishedOn: publishedOn,
       expanded: expanded,
+      theme: theme,
+      showRoomOnMain: showRoomOnMain,
       maxEvents: maxEvents,
       locationToShow: locationToShow,
       eventRotationInterval: eventRotationInterval,
@@ -39,7 +41,7 @@ export default {
     },
     source: {
       type: String,
-      default: "",
+      default: "null",
     },
     tags: {
       type: String,
@@ -50,6 +52,14 @@ export default {
       default: "",
     },
     expanded: {
+      type: String,
+      default: "false",
+    },
+    theme: {
+      type: String,
+      default: "default",
+    },
+    showRoomOnMain: {
       type: String,
       default: "false",
     },
