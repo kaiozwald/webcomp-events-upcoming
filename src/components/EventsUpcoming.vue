@@ -270,7 +270,7 @@ export default {
     this.rotateEvents();
     // create cron job
     setInterval(this.getNow, 1000);
-    setInterval(this.rotateEvents, this.options.eventRotationInterval * 1000);
+    setInterval(this.rotateEvents, this.options.eventRefreshInterval * 1000);
   },
   methods: {
     async fetchData() {

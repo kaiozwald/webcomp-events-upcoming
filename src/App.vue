@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
       showRoomOnMain: showRoomOnMain,
       maxEvents: maxEvents,
       locationToShow: locationToShow,
-      eventRotationInterval: eventRotationInterval,
+      eventRefreshInterval: eventRefreshInterval,
       languageRotationInterval: languageRotationInterval,
       backgroundColor: backgroundColor,
       fontName: fontName,
@@ -41,7 +41,7 @@ export default {
     },
     source: {
       type: String,
-      default: "null",
+      default: "",
     },
     tags: {
       type: String,
@@ -65,7 +65,7 @@ export default {
     },
     maxEvents: {
       type: Number,
-      default: 20,
+      default: 12,
     },
     locationToShow: {
       type: String,
@@ -75,7 +75,7 @@ export default {
       type: String,
       default: "upcomingspecial",
     },
-    eventRotationInterval: {
+    eventRefreshInterval: {
       type: Number,
       default: 600,
     },
@@ -90,11 +90,11 @@ export default {
     fontUrl: {
       type: String,
       default:
-        "https://s3.eu-west-1.amazonaws.com/noi-fonts/open-sans/style.css",
+        "https://s3.eu-west-1.amazonaws.com/noi-fonts/source-sans-pro/style.css",
     },
     fontName: {
       type: String,
-      default: "Milo Bold",
+      default: "Source Sans Pro",
     },
   },
   components: {
